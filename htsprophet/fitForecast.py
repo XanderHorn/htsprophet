@@ -18,8 +18,19 @@ It was my intention to make some of the code look similar to certain sections in
 import pandas as pd
 import numpy as np
 from fbprophet import Prophet
-import contextlib, os
+import contextlib, os, sys
 from scipy.special import inv_boxcox
+
+# Python2 equivalent of Python3's `contextlib.redirect_stdout`
+# Taken from https://eli.thegreenplace.net/2015/redirecting-all-kinds-of-stdout-in-python/
+@contextlib.contextmanager
+def stdout_redirector(stream):
+    old_stdout = sys.stdout
+    sys.stdout = stream
+    try:
+        yield
+    finally:
+        sys.stdout = old_stdout
 
 #%%
 def fitForecast(y, h, sumMat, nodes, method, freq, include_history, cap, capF, changepoints, n_changepoints, \
@@ -65,7 +76,7 @@ def fitForecast(y, h, sumMat, nodes, method, freq, include_history, cap, capF, c
             ##
             # Put the forecasts into a dictionary of dataframes
             ##
-            with contextlib.redirect_stdout(open(os.devnull, "w")):
+            with stdout_redirector(open(os.devnull, "w")):
                 # Prophet related stuff
                 nodeToForecast = nodeToForecast.rename(columns = {nodeToForecast.columns[0] : 'ds'})
                 nodeToForecast = nodeToForecast.rename(columns = {nodeToForecast.columns[1] : 'y'})
