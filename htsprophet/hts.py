@@ -308,9 +308,9 @@ def makeWeekly(data):
     if columnCount < 1:
         sys.exit("you need at least 1 column")
     data[columnList[0]] = pd.to_datetime(data[columnList[0]])
-    cl = tuple(columnList[1:-1])
-    data1 = data.groupby([pd.Grouper(key = columnList[0], freq='W'), *cl], as_index = False)[columnList[-1]].sum()
-    data2 = data.groupby([pd.Grouper(key = columnList[0], freq='W'), *cl])[columnList[-1]].sum()
+    cl = columnList[1:-1]
+    data1 = data.groupby([pd.Grouper(key = columnList[0], freq='W')] + cl, as_index = False)[columnList[-1]].sum()
+    data2 = data.groupby([pd.Grouper(key = columnList[0], freq='W')] + cl)[columnList[-1]].sum()
     data1['week'] = data2.index.get_level_values(columnList[0])
     cols = data1.columns.tolist()
     cols = cols[-1:] + cols[:-1]
